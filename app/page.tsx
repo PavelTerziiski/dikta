@@ -115,8 +115,7 @@ function FoksySvg({ mood = "happy", size = 120, animate = true }: { mood?: strin
       <rect x="50" y="75" width="20" height="8" rx="3" fill="#15803D"/>
       <circle cx="60" cy="91" r="3" fill="#FED7AA"/>
       {/* Ръце */}
-      <ellipse cx="34" cy="82" rx="7" ry="10" rx2="5" fill="#F97316" transform="rotate(-20 34 82)"/>
-      <ellipse cx="86" cy="82" rx="7" ry="10" fill="#F97316" transform="rotate(20 86 82)"/>
+      <ellipse cx="34" cy="82" rx="7" ry="10" fill="#F97316" transform="rotate(-20 34 82)"/>
     </svg>
   );
 }
