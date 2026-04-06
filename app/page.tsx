@@ -152,6 +152,18 @@ export default function Home() {
   const token = session?.access_token;
 
   useEffect(() => {
+    // Handle email confirmation redirect
+    const hash = window.location.hash;
+    if (hash && hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.substring(1));
+      const tok = params.get("access_token");
+      const uid = params.get("user_id") || "";
+      if (tok) {
+        const fakeSession = { access_token: tok, user: { id: uid } };
+        localStorage.setItem("dikta_session", JSON.stringify(fakeSession));
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    }
     const saved = localStorage.getItem("dikta_session");
     if (saved) {
       try {
@@ -165,7 +177,14 @@ export default function Home() {
   const loadProfile = async (uid: string, tok: string) => {
     try {
       const rows = await sb(`profiles?id=eq.${uid}&select=*`, { method: "GET" }, tok);
-      if (rows?.[0]) { setProfile(rows[0]); setStreak(rows[0].streak_count || 0); setScreen("app"); }
+      if (rows?.[0]) { 
+  setProfile(rows[0]); 
+  setStreak(rows[0].streak_count || 0); 
+  setScreen("app"); 
+} else {
+  // Профилът не съществува — създай го
+  setScreen("app");
+}
     } catch (_) {}
   };
 
@@ -192,7 +211,7 @@ export default function Home() {
         localStorage.setItem("dikta_session", JSON.stringify(data));
         setSession(data);
         await loadProfile(uid, data.access_token);
-      } else { setScreen("login"); setAuthError("✅ Провери имейла си за потвърждение!"); }
+      } else { setScreen("login"); setAuthError("✅ Провери имейла си и потвърди, после влез!"); }
     } catch (e: any) { setAuthError(e.message || "Грешка при регистрация."); }
     finally { setAuthLoading(false); }
   };
