@@ -50,6 +50,61 @@ const DICTATIONS = [
     ],
   },
   {
+    id: "d3", grade: 3, theme: "Животни", difficulty: 2,
+    sentences: [
+      "Котката спи на топлото одеяло.",
+      "Кучето тича из двора.",
+      "Птичката пее на прозореца.",
+    ],
+  },
+  {
+    id: "d4", grade: 4, theme: "Природа", difficulty: 1,
+    sentences: [
+      "Пролетта пристига с топли ветрове.",
+      "Цветята разцъфтяват в градината.",
+      "Реката тече бавно към морето.",
+    ],
+  },
+  {
+    id: "d5", grade: 4, theme: "Семейство", difficulty: 2,
+    sentences: [
+      "Семейството се събра около масата.",
+      "Дядо разказва интересни истории.",
+      "Всички се смеят и се радват заедно.",
+    ],if (rows?.[0]) { 
+  setProfile(rows[0]); 
+  setStreak(rows[0].streak_count || 0); 
+  setScreen("app"); 
+} else {
+  setScreen("login");
+}
+  },
+  {
+    id: "d6", grade: 4, theme: "Училище", difficulty: 2,
+    sentences: [
+      "Учителката обяснява новия урок внимателно.",
+      "Учениците пишат в тетрадките си.",
+      "След часа децата излизат на двора.",
+    ],
+  },
+];
+  {
+    id: "d1", grade: 3, theme: "Природа", difficulty: 1,
+    sentences: [
+      "Слънцето грее ярко на небето.",
+      "Птиците пеят весело в гората.",
+      "Децата играят на поляната.",
+    ],
+  },
+  {
+    id: "d2", grade: 3, theme: "Семейство", difficulty: 1,
+    sentences: [
+      "Мама приготвя вкусна вечеря.",
+      "Татко чете книга на дивана.",
+      "Сестра ми рисува красиви картини.",
+    ],
+  },
+  {
     id: "d3", grade: 4, theme: "Училище", difficulty: 2,
     sentences: [
       "Учителката обяснява новия урок.",
@@ -324,7 +379,7 @@ export default function Home() {
           </button>
           <button onClick={() => setScreen("register")}
             style={{ background: "#fff", border: "3px solid #F97316", borderRadius: 20, padding: "15px 40px", color: "#F97316", fontSize: 18, fontWeight: 800, fontFamily: "'Fredoka', sans-serif" }}>
-            Нова сметка 🌟
+            Създай профил 🌟
           </button>
         </div>
 
@@ -395,7 +450,8 @@ export default function Home() {
 
   // ── ГЛАВЕН ЕКРАН ───────────────────────────────────────────
   if (screen === "app") {
-    const availableDicts = DICTATIONS.filter(d => d.grade === parseInt(profile?.grade || "3"));
+    const userGrade = parseInt(profile?.grade || "3");
+const availableDicts = DICTATIONS.filter(d => d.grade === userGrade);
     return (
       <div style={{ minHeight: "100vh", background: "#FFFBF5" }}>
         <style>{globalCSS}</style>
@@ -405,7 +461,7 @@ export default function Home() {
             <FoksySvg size={52} mood="happy" animate={false} />
             <div>
               <div style={{ fontFamily: "'Fredoka', sans-serif", fontSize: 24, color: "#fff", fontWeight: 600 }}>Диkта</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 600 }}>Здравей, {profile?.name?.split(" ")[0]}! 👋</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 600 }}>Здравей, {profile?.name?.split(" ")[0]}! 👋 · {profile?.grade} клас</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
