@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дикта 🦊</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #FFFBF5; min-height: 100vh; }
+
+/* ── Фокси анимации ── */
+.foksy { width: 120px; height: 120px; object-fit: contain; display: block; margin: 0 auto; }
+.foksy-happy    { animation: foksy-bounce 1.8s ease-in-out infinite; }
+.foksy-excited  { animation: foksy-dance 0.5s ease-in-out infinite; }
+.foksy-thinking { animation: foksy-think 3s ease-in-out infinite; }
+.foksy-sad      { animation: foksy-sad 2s ease-in-out infinite; }
+.foksy-celebrate{ animation: foksy-celebrate 0.6s ease-in-out infinite; }
+.foksy-idle     { animation: foksy-idle 4s ease-in-out infinite; }
+
+@keyframes foksy-bounce {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+@keyframes foksy-dance {
+  0%   { transform: rotate(-8deg) scale(1.05); }
+  25%  { transform: rotate(8deg) scale(1.1) translateY(-5px); }
+  50%  { transform: rotate(-8deg) scale(1.05); }
+  75%  { transform: rotate(8deg) scale(1.1) translateY(-5px); }
+  100% { transform: rotate(-8deg) scale(1.05); }
+}
+@keyframes foksy-think {
+  0%,100% { transform: rotate(0deg) translateY(0); }
+  30% { transform: rotate(-5deg) translateY(-3px); }
+  60% { transform: rotate(5deg) translateY(-3px); }
+}
+@keyframes foksy-sad {
+  0%,100% { transform: translateY(0) rotate(0deg) scaleY(1); }
+  50% { transform: translateY(4px) rotate(-3deg) scaleY(0.95); }
+}
+@keyframes foksy-celebrate {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); }
+  25%  { transform: translateY(-18px) scale(1.15) rotate(-5deg); }
+  50%  { transform: translateY(-22px) scale(1.2) rotate(5deg); }
+  75%  { transform: translateY(-18px) scale(1.15) rotate(-5deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+@keyframes foksy-idle {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(1deg); }
+  75% { transform: translateY(-4px) rotate(-1deg); }
+}
+
+/* ── Екрани ── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── HOME ── */
+#screen-home {
+  background: linear-gradient(160deg, #FFF7ED 0%, #FFEDD5 60%, #FEF3C7 100%);
+  align-items: center; justify-content: center; padding: 32px 24px; position: relative; overflow: hidden;
+}
+#screen-home::before {
+  content: ''; position: absolute; top: -120px; right: -120px;
+  width: 450px; height: 450px; border-radius: 50%; background: rgba(249,115,22,0.07); pointer-events: none;
+}
+#screen-home::after {
+  content: ''; position: absolute; bottom: -100px; left: -100px;
+  width: 350px; height: 350px; border-radius: 50%; background: rgba(22,163,74,0.05); pointer-events: none;
+}
+.home-content { text-align: center; max-width: 460px; width: 100%; animation: fadeUp 0.6s ease; }
+.home-title { font-family: 'Fredoka', sans-serif; font-size: 58px; color: #F97316; line-height: 1; letter-spacing: -1px; margin: 8px 0 4px; }
+.home-sub { font-size: 20px; color: #78716C; font-weight: 700; margin-bottom: 4px; }
+.home-desc { font-size: 15px; color: #A8A29E; font-weight: 600; margin-bottom: 40px; }
+.home-icons { display: flex; justify-content: center; gap: 36px; margin-top: 36px; }
+.home-icon { text-align: center; }
+.home-icon span { font-size: 28px; display: block; }
+.home-icon small { font-size: 13px; color: #A8A29E; font-weight: 700; }
+
+/* ── AUTH ── */
+#screen-login, #screen-register {
+  background: linear-gradient(160deg, #FFF7ED 0%, #FFEDD5 100%);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.auth-card {
+  background: #fff; border-radius: 32px; padding: 40px 36px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 24px 64px rgba(249,115,22,0.12);
+  animation: fadeUp 0.5s ease;
+}
+.auth-title { font-family: 'Fredoka', sans-serif; font-size: 32px; color: #F97316; text-align: center; margin: 12px 0 24px; }
+.auth-input {
+  width: 100%; padding: 14px 18px; border: 2.5px solid #FED7AA; border-radius: 16px;
+  font-size: 16px; margin-bottom: 12px; background: #FFFBF5; color: #292524;
+  font-family: 'Nunito', sans-serif; display: block;
+}
+.auth-input:focus { outline: none; border-color: #F97316; }
+.grade-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+.grade-btn {
+  flex: 1; padding: 12px; border: 2.5px solid #FED7AA; border-radius: 14px;
+  background: #fff; color: #A8A29E; font-weight: 800; font-size: 18px;
+  font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.2s;
+}
+.grade-btn.active { border-color: #F97316; background: #FFF7ED; color: #F97316; }
+.error-box {
+  background: #FFF1F2; border: 1px solid #FECACA; border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #EF4444; font-weight: 700;
+}
+.error-box.success { background: #F0FDF4; border-color: #BBF7D0; color: #16A34A; }
+
+/* ── APP ── */
+#screen-app { background: #FFFBF5; }
+.app-header {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  padding: 18px 24px 22px;
+}
+.app-header-inner { max-width: 600px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.app-header-left { display: flex; align-items: center; gap: 12px; }
+.app-header-logo { font-family: 'Fredoka', sans-serif; font-size: 22px; color: #fff; line-height: 1; }
+.app-header-sub { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; }
+.streak-badge {
+  background: rgba(255,255,255,0.2); border-radius: 20px; padding: 8px 16px;
+  display: flex; align-items: center; gap: 6px; color: #fff; font-weight: 800; font-size: 16px;
+}
+.tabs {
+  display: flex; gap: 4px; background: #FEF3C7; border-radius: 14px;
+  padding: 4px; margin: 16px auto; max-width: 600px;
+}
+.tab-btn {
+  flex: 1; padding: 10px 4px; border: none; border-radius: 10px; font-weight: 800;
+  font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: 'Nunito', sans-serif;
+  background: transparent; color: #A8A29E;
+}
+.tab-btn.active { background: #fff; color: #F97316; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tab-content { display: none; max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
+.tab-content.active { display: block; animation: fadeUp 0.4s ease; }
+
+/* ── CARDS ── */
+.foksy-msg {
+  background: #fff; border-radius: 22px; padding: 18px 20px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+.foksy-msg-text h3 { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #292524; margin-bottom: 4px; }
+.foksy-msg-text p { font-size: 14px; color: #78716C; line-height: 1.5; }
+.dict-card {
+  background: #fff; border-radius: 22px; padding: 18px 22px; margin-bottom: 12px;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  border: 2px solid transparent; transition: all 0.25s;
+  display: flex; align-items: center; gap: 14px;
+}
+.dict-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(249,115,22,0.15); border-color: #F97316; }
+.dict-icon { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.dict-info { flex: 1; }
+.dict-title { font-family: 'Fredoka', sans-serif; font-size: 19px; color: #292524; margin-bottom: 4px; }
+.dict-meta { font-size: 13px; color: #A8A29E; font-weight: 600; margin-bottom: 6px; }
+.difficulty { display: flex; gap: 3px; }
+.diff-dot { width: 18px; height: 6px; border-radius: 3px; background: #E7E5E4; }
+.diff-dot.active { background: #F97316; }
+.streak-banner {
+  background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border: 2px solid #FED7AA;
+  border-radius: 20px; padding: 14px 18px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.streak-banner h3 { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #F97316; margin-bottom: 2px; }
+.streak-banner p { font-size: 13px; color: #A8A29E; font-weight: 600; }
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.stat-card { background: #fff; border-radius: 20px; padding: 18px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+.stat-icon { font-size: 28px; margin-bottom: 6px; }
+.stat-value { font-family: 'Fredoka', sans-serif; font-size: 28px; line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 12px; color: #A8A29E; font-weight: 700; }
+.history-item {
+  background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.history-score {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ── SETTINGS ── */
+.settings-card { background: #fff; border-radius: 22px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); margin-bottom: 16px; }
+.profile-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fredoka', sans-serif; font-size: 28px; color: #fff; flex-shrink: 0;
+}
+.foksy-love { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 22px; padding: 20px; border: 2px solid #FED7AA; text-align: center; }
+.foksy-love h3 { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #F97316; margin: 8px 0 4px; }
+.foksy-love p { font-size: 13px; color: #A8A29E; }
+
+/* ── DICTATION ── */
+#screen-dictation { background: #FFFBF5; }
+.dict-header {
+  background: #fff; border-bottom: 2px solid #FEF3C7;
+  padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+}
+.dict-header-info { flex: 1; }
+.dict-header-title { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #292524; }
+.dict-header-sub { font-size: 12px; color: #A8A29E; font-weight: 600; }
+.progress-bar { height: 8px; background: #FEF3C7; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #F97316, #EF4444); transition: width 0.5s ease; }
+.dict-body { max-width: 600px; margin: 0 auto; padding: 24px 20px; }
+.listen-card {
+  background: #fff; border-radius: 28px; padding: 28px 24px; margin-bottom: 20px;
+  box-shadow: 0 6px 24px rgba(249,115,22,0.1); text-align: center;
+}
+.listen-title { font-family: 'Fredoka', sans-serif; font-size: 22px; color: #292524; margin: 12px 0 6px; }
+.listen-sub { font-size: 14px; color: #A8A29E; font-weight: 600; margin-bottom: 18px; }
+.speed-btns { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+.speed-btn {
+  padding: 8px 18px; border: 2px solid #FED7AA; border-radius: 20px;
+  background: #fff; color: #A8A29E; font-weight: 800; font-size: 14px;
+  cursor: pointer; transition: all 0.2s; font-family: 'Nunito', sans-serif;
+}
+.speed-btn.active { border-color: #F97316; background: #FFF7ED; color: #F97316; }
+.write-card { background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+.write-label { font-size: 15px; color: #78716C; font-weight: 700; margin-bottom: 10px; }
+.write-input {
+  width: 100%; padding: 16px; border: 2.5px solid #FED7AA; border-radius: 18px;
+  font-size: 18px; line-height: 1.6; resize: none; height: 110px;
+  background: #FFFBF5; color: #292524; font-family: 'Nunito', sans-serif;
+  display: block;
+}
+.write-input:focus { outline: none; border-color: #F97316; }
+
+/* ── RESULT CARD ── */
+.result-card {
+  background: #fff; border-radius: 28px; padding: 28px 24px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08); text-align: center;
+  animation: pop 0.4s ease;
+}
+.result-score { font-family: 'Fredoka', sans-serif; font-size: 60px; line-height: 1; margin: 8px 0; }
+.result-msg { font-size: 18px; color: #78716C; font-weight: 700; margin-bottom: 16px; }
+.compare-box { background: #FFFBF5; border-radius: 16px; padding: 14px; text-align: left; margin-bottom: 14px; }
+.compare-label { font-size: 12px; color: #A8A29E; font-weight: 700; margin-bottom: 4px; }
+.compare-text { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+.explain-box { background: #FFF7ED; border-radius: 16px; padding: 16px; text-align: left; margin-bottom: 14px; }
+.explain-title { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #F97316; margin-bottom: 10px; }
+.explain-item { margin-bottom: 10px; font-size: 14px; color: #292524; line-height: 1.6; }
+
+/* ── FINAL RESULT ── */
+#screen-result {
+  background: linear-gradient(160deg, #FFF7ED, #FFEDD5);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.final-card {
+  background: #fff; border-radius: 32px; padding: 40px 32px;
+  max-width: 480px; width: 100%; text-align: center;
+  box-shadow: 0 24px 64px rgba(249,115,22,0.15);
+  animation: pop 0.4s ease;
+}
+.final-score { font-family: 'Fredoka', sans-serif; font-size: 80px; line-height: 1; margin: 8px 0; }
+.stars { display: flex; justify-content: center; gap: 8px; margin: 12px 0; font-size: 36px; }
+.final-title { font-family: 'Fredoka', sans-serif; font-size: 26px; color: #292524; margin-bottom: 6px; }
+.final-streak { font-size: 15px; color: #F97316; font-weight: 800; margin-bottom: 20px; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%; padding: 16px; background: #F97316; border: none; border-radius: 18px;
+  color: #fff; font-size: 18px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(249,115,22,0.4); font-family: 'Fredoka', sans-serif;
+  transition: all 0.2s; display: block; text-align: center;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(249,115,22,0.5); }
+.btn-primary:disabled { background: #FED7AA; box-shadow: none; cursor: not-allowed; transform: none; }
+.btn-primary.green { background: #16A34A; box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
+.btn-primary.green:hover { box-shadow: 0 8px 28px rgba(22,163,74,0.45); }
+.btn-secondary {
+  width: 100%; padding: 14px; background: #fff; border: 2.5px solid #F97316;
+  border-radius: 18px; color: #F97316; font-size: 16px; font-weight: 800;
+  cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s;
+}
+.btn-secondary:hover { transform: translateY(-2px); }
+.btn-link {
+  width: 100%; padding: 12px; background: none; border: none;
+  color: #A8A29E; font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.btn-logout {
+  width: 100%; padding: 14px; background: #FFF1F2; border: 2px solid #FECACA;
+  border-radius: 16px; color: #EF4444; font-weight: 800; font-size: 16px;
+  cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.section-title { font-family: 'Fredoka', sans-serif; font-size: 20px; color: #292524; margin-bottom: 12px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- ── HOME ── -->
+<div id="screen-home" class="screen active">
+  <div class="home-content">
+    <img src="foxy.png" class="foksy foksy-excited" id="home-foksy" alt="Фокси">
+    <h1 class="home-title">Диkта</h1>
+    <p class="home-sub">Здравей! Аз съм Фокси 🦊</p>
+    <p class="home-desc">Твоят приятел за диктовки и правопис</p>
+    <button class="btn-primary" onclick="showScreen('login')">Влез в играта! 🎯</button>
+    <button class="btn-secondary mt-12" onclick="showScreen('register')">Създай профил 🌟</button>
+    <div class="home-icons">
+      <div class="home-icon"><span>📝</span><small>Диктовки</small></div>
+      <div class="home-icon"><span>⚡</span><small>Бързо учене</small></div>
+      <div class="home-icon"><span>🏆</span><small>Награди</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LOGIN ── -->
+<div id="screen-login" class="screen">
+  <div class="auth-card" style="margin:auto">
+    <div style="text-align:center">
+      <img src="foxy.png" class="foksy foksy-happy" style="width:90px;height:90px" alt="Фокси">
+      <h2 class="auth-title">Добре дошъл!</h2>
+    </div>
+    <input type="email" class="auth-input" id="login-email" placeholder="Имейл">
+    <input type="password" class="auth-input" id="login-password" placeholder="Парола" onkeydown="if(event.key==='Enter')handleLogin()">
+    <div id="login-error" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">Влез! 🎯</button>
+    <button class="btn-link" onclick="showScreen('register')">Нямам акаунт — регистрирай ме!</button>
+    <button class="btn-link" onclick="showScreen('home')" style="color:#C4B5A5;font-size:14px">← Начало</button>
+  </div>
+</div>
+
+<!-- ── REGISTER ── -->
+<div id="screen-register" class="screen">
+  <div class="auth-card" style="margin:auto">
+    <div style="text-align:center">
+      <img src="foxy.png" class="foksy foksy-happy" style="width:90px;height:90px" alt="Фокси">
+      <h2 class="auth-title">Регистрация</h2>
+    </div>
+    <input type="text" class="auth-input" id="reg-name" placeholder="Твоето име">
+    <input type="email" class="auth-input" id="reg-email" placeholder="Имейл">
+    <input type="password" class="auth-input" id="reg-password" placeholder="Парола" onkeydown="if(event.key==='Enter')handleRegister()">
+    <div style="margin-bottom:20px">
+      <div style="font-size:14px;color:#78716C;font-weight:700;margin-bottom:8px">В кой клас си?</div>
+      <div class="grade-selector">
+        <button class="grade-btn active" id="grade-3" onclick="selectGrade('3')">3 клас</button>
+        <button class="grade-btn" id="grade-4" onclick="selectGrade('4')">4 клас</button>
+      </div>
+    </div>
+    <div id="reg-error" class="error-box" style="display:none"></div>
+    <button class="btn-primary" id="reg-btn" onclick="handleRegister()">Регистрирай се! 🚀</button>
+    <button class="btn-link" onclick="showScreen('login')">Вече имам акаунт</button>
+    <button class="btn-link" onclick="showScreen('home')" style="color:#C4B5A5;font-size:14px">← Начало</button>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="screen-app" class="screen">
+  <div class="app-header">
+    <div class="app-header-inner">
+      <div class="app-header-left">
+        <img src="foxy.png" class="foksy foksy-idle" style="width:50px;height:50px" alt="Фокси">
+        <div>
+          <div class="app-header-logo">Диkта</div>
+          <div class="app-header-sub" id="header-greeting">Здравей! 👋</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="streak-badge">🔥 <span id="header-streak">0</span></div>
+        <button onclick="handleLogout()" style="background:rgba(255,255,255,0.15);border:none;border-radius:14px;padding:8px 14px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif">Изход</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:600px;margin:0 auto;padding:0 20px">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dictations')">📝 Диктовки</button>
+      <button class="tab-btn" onclick="switchTab('progress')">📊 Прогрес</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ Настройки</button>
+    </div>
+
+    <!-- TAB: Диктовки -->
+    <div id="tab-dictations" class="tab-content active">
+      <div id="streak-banner" class="streak-banner" style="display:none">
+        <span style="font-size:32px">🔥</span>
+        <div>
+          <h3 id="streak-text">0 поредни!</h3>
+          <p>Фокси е горд! Продължавай!</p>
+        </div>
+      </div>
+      <div class="foksy-msg">
+        <img src="foxy.png" class="foksy foksy-happy" style="width:65px;height:65px;flex-shrink:0" alt="Фокси">
+        <div class="foksy-msg-text">
+          <h3>Готов ли си? 🎯</h3>
+          <p>Избери диктовка и аз ще ти чета изреченията!</p>
+        </div>
+      </div>
+      <div class="section-title" id="dicts-title">Диктовки за клас 📚</div>
+      <div id="dicts-list"></div>
+    </div>
+
+    <!-- TAB: Прогрес -->
+    <div id="tab-progress" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-value" id="stat-total" style="color:#F97316">0</div><div class="stat-label">Диктовки</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-avg" style="color:#16A34A">0%</div><div class="stat-label">Среден резултат</div></div>
+        <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value" id="stat-streak" style="color:#EF4444">0</div><div class="stat-label">Поредица</div></div>
+        <div class="stat-card"><div class="stat-icon">🎓</div><div class="stat-value" id="stat-grade" style="color:#8B5CF6">3</div><div class="stat-label">Клас</div></div>
+      </div>
+      <div class="section-title">Последни диктовки 📋</div>
+      <div id="history-list"></div>
+    </div>
+
+    <!-- TAB: Настройки -->
+    <div id="tab-settings" class="tab-content">
+      <div class="settings-card">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+          <div class="profile-avatar" id="profile-avatar">П</div>
+          <div>
+            <div style="font-family:'Fredoka',sans-serif;font-size:22px;color:#292524" id="profile-name">Потребител</div>
+            <div style="font-size:14px;color:#A8A29E;font-weight:600" id="profile-email">-</div>
+          </div>
+        </div>
+        <div style="font-size:14px;color:#78716C;font-weight:700;margin-bottom:8px">Промени клас:</div>
+        <div class="grade-selector" style="margin-bottom:16px">
+          <button class="grade-btn" id="settings-grade-3" onclick="changeGrade('3')">3 клас</button>
+          <button class="grade-btn" id="settings-grade-4" onclick="changeGrade('4')">4 клас</button>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">Изход 👋</button>
+      </div>
+      <div class="foksy-love">
+        <img src="foxy.png" class="foksy foksy-excited" style="width:70px;height:70px" alt="Фокси">
+        <h3>Фокси те обича! 🦊</h3>
+        <p>Практикувай всеки ден за най-добри резултати</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DICTATION ── -->
+<div id="screen-dictation" class="screen">
+  <div class="dict-header">
+    <button onclick="exitDictation()" style="background:#FFF7ED;border:none;border-radius:12px;padding:8px 16px;color:#F97316;font-weight:800;font-size:14px;cursor:pointer;font-family:'Nunito',sans-serif">← Назад</button>
+    <div class="dict-header-info">
+      <div class="dict-header-title" id="dict-theme">Диктовка</div>
+      <div class="dict-header-sub" id="dict-progress">Изречение 1 от 3</div>
+    </div>
+    <img src="foxy.png" id="dict-foksy" class="foksy foksy-thinking" style="width:44px;height:44px" alt="Фокси">
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="dict-body">
+    <!-- Слушай -->
+    <div id="listen-panel" class="listen-card">
+      <img src="foxy.png" id="listen-foksy" class="foksy foksy-thinking" style="width:100px;height:100px" alt="Фокси">
+      <div class="listen-title">Слушай внимателно! 👂</div>
+      <div class="listen-sub">Натисни бутона за да чуеш изречението</div>
+      <div class="speed-btns">
+        <button class="speed-btn" onclick="setSpeed(0.7)">×0.7</button>
+        <button class="speed-btn active" onclick="setSpeed(1.0)">×1.0</button>
+        <button class="speed-btn" onclick="setSpeed(1.2)">×1.2</button>
+      </div>
+      <button class="btn-primary" id="speak-btn" onclick="speakCurrent()" style="width:auto;padding:16px 36px;display:inline-block">🔊 Прочети ми!</button>
+    </div>
+
+    <!-- Пиши -->
+    <div id="write-panel" class="write-card" style="display:none">
+      <div class="write-label">✏️ Напиши изречението:</div>
+      <textarea class="write-input" id="user-input" placeholder="Пиши тук..."></textarea>
+      <button class="btn-primary green mt-12" id="check-btn" onclick="submitSentence()" disabled>Проверете! ✅</button>
+    </div>
+
+    <!-- Резултат от изречение -->
+    <div id="result-panel" class="result-card" style="display:none">
+      <img src="foxy.png" id="result-foksy" class="foksy" style="width:110px;height:110px" alt="Фокси">
+      <div class="result-score" id="result-score">100%</div>
+      <div class="result-msg" id="result-msg">Браво!</div>
+      <div class="compare-box">
+        <div class="compare-label">ПРАВИЛНО:</div>
+        <div class="compare-text" id="correct-text" style="color:#16A34A"></div>
+        <div class="compare-label">НАПИСАЛ СИ:</div>
+        <div class="compare-text" id="user-text"></div>
+      </div>
+      <button id="explain-btn" onclick="toggleExplain()" style="background:#FFF7ED;border:2px solid #FED7AA;border-radius:14px;padding:10px 20px;color:#F97316;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:14px;font-family:'Nunito',sans-serif;display:none">🦊 Фокси обяснява защо</button>
+      <div id="explain-box" class="explain-box" style="display:none">
+        <div class="explain-title">Фокси казва: 🦊</div>
+        <div id="explain-content"></div>
+      </div>
+      <button class="btn-primary mt-12" id="next-btn" onclick="nextSentence()">Следващо →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FINAL RESULT ── -->
+<div id="screen-result" class="screen">
+  <div class="final-card">
+    <img src="foxy.png" id="final-foksy" class="foksy" style="width:130px;height:130px" alt="Фокси">
+    <div class="final-score" id="final-score">100%</div>
+    <div class="stars" id="final-stars">⭐⭐⭐</div>
+    <div class="final-title" id="final-title">Невероятно!</div>
+    <div class="final-streak" id="final-streak" style="display:none"></div>
+    <button class="btn-primary mt-16" onclick="retryDictation()">Опитай пак! 🔄</button>
+    <button class="btn-secondary mt-12" onclick="showScreen('app')">Избери друга диктовка</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://gilfpdosfdiolvrwsnkz.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbGZwZG9zZmRpb2x2cndzbmt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MDY2OTksImV4cCI6MjA5MTA4MjY5OX0.-ztgrdn4HJcCNt5kVVQah2O3rDoEsBHLw0AzTazybjM";
+
+const DICTATIONS = [
+  { id:"d1", grade:3, theme:"Природа", difficulty:1, icon:"🌿", color:"#4CAF50", sentences:["Слънцето грее ярко на небето.","Птиците пеят весело в гората.","Децата играят на поляната."] },
+  { id:"d2", grade:3, theme:"Семейство", difficulty:1, icon:"👨‍👩‍👧", color:"#FF8B94", sentences:["Мама приготвя вкусна вечеря.","Татко чете книга на дивана.","Сестра ми рисува красиви картини."] },
+  { id:"d3", grade:3, theme:"Животни", difficulty:2, icon:"🐾", color:"#FF9800", sentences:["Котката спи на топлото одеяло.","Кучето тича из двора.","Птичката пее на прозореца."] },
+  { id:"d4", grade:4, theme:"Природа", difficulty:1, icon:"🌸", color:"#4CAF50", sentences:["Пролетта пристига с топли ветрове.","Цветята разцъфтяват в градината.","Реката тече бавно към морето."] },
+  { id:"d5", grade:4, theme:"Семейство", difficulty:2, icon:"🏠", color:"#9C27B0", sentences:["Семейството се събра около масата.","Дядо разказва интересни истории.","Всички се смеят и се радват заедно."] },
+  { id:"d6", grade:4, theme:"Училище", difficulty:2, icon:"🏫", color:"#2196F3", sentences:["Учителката обяснява новия урок внимателно.","Учениците пишат в тетрадките си.","След часа децата излизат на двора."] },
+];
+
+// ── State ──
+let session = null, profile = null, streak = 0;
+let activeDictation = null, sentenceIdx = 0, sessionResults = [];
+let currentSpeed = 1.0, isPlaying = false, explainVisible = false;
+let currentResult = null, finalScore = 0, history = [];
+
+// ── API ──
+async function sb(path, opts = {}, tok) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${tok || SUPABASE_KEY}`, "Content-Type": "application/json", Prefer: opts.prefer || "return=representation" },
+    ...opts
+  });
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function authFetch(path, body) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || "Грешка");
+  return data;
+}
+
+// ── Screens ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'progress') renderProgress();
+}
+
+function setFoksyMood(id, mood) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'foksy foksy-' + mood;
+  el.style.width = el.style.width || '100px';
+  el.style.height = el.style.height || '100px';
+}
+
+// ── Auth ──
+function selectGrade(g) {
+  document.getElementById('grade-3').classList.toggle('active', g === '3');
+  document.getElementById('grade-4').classList.toggle('active', g === '4');
+}
+
+function showError(id, msg, isSuccess = false) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'error-box' + (isSuccess ? ' success' : '');
+  el.style.display = msg ? 'block' : 'none';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) { showError('login-error', 'Въведете имейл и парола.'); return; }
+  const btn = document.getElementById('login-btn');
+  btn.textContent = '⏳ Зареждане...'; btn.disabled = true;
+  showError('login-error', '');
+  try {
+    const data = await authFetch('token?grant_type=password', { email: email.toLowerCase(), password });
+    localStorage.setItem('dikta_session', JSON.stringify(data));
+    session = data;
+    await loadProfile(data.user.id, data.access_token);
+  } catch(e) {
+    showError('login-error', 'Грешен имейл или парола.');
+  } finally {
+    btn.textContent = 'Влез! 🎯'; btn.disabled = false;
+  }
+}
+
+async function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const grade = document.getElementById('grade-3').classList.contains('active') ? '3' : '4';
+  if (!name || !email || !password) { showError('reg-error', 'Всички полета са задължителни.'); return; }
+  const btn = document.getElementById('reg-btn');
+  btn.textContent = '⏳ Регистрация...'; btn.disabled = true;
+  showError('reg-error', '');
+  try {
+    const data = await authFetch('signup', { email: email.toLowerCase(), password, data: { name } });
+    const uid = data.user?.id;
+    await sb('profiles', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ id:uid, email:email.toLowerCase(), name, grade, streak_count:0, is_admin:false, approved:true }) }, SUPABASE_KEY);
+    if (data.access_token) {
+      localStorage.setItem('dikta_session', JSON.stringify(data));
+      session = data;
+      await loadProfile(uid, data.access_token);
+    } else {
+      showError('reg-error', '✅ Потвърди имейла си и после влез!', true);
+    }
+  } catch(e) {
+    showError('reg-error', e.message || 'Грешка при регистрация.');
+  } finally {
+    btn.textContent = 'Регистрирай се! 🚀'; btn.disabled = false;
+  }
+}
+
+async function loadProfile(uid, tok) {
+  try {
+    const rows = await sb(`profiles?id=eq.${uid}&select=*`, { method:'GET' }, tok);
+    if (rows?.[0]) {
+      profile = rows[0];
+      streak = profile.streak_count || 0;
+      renderApp();
+      showScreen('app');
+      loadHistory();
+    } else {
+      showScreen('login');
+    }
+  } catch(_) { showScreen('login'); }
+}
+
+function handleLogout() {
+  localStorage.removeItem('dikta_session');
+  session = null; profile = null; streak = 0; history = [];
+  showScreen('home');
+}
+
+function renderApp() {
+  const name = profile.name.split(' ')[0];
+  document.getElementById('header-greeting').textContent = `Здравей, ${name}! · ${profile.grade} клас`;
+  document.getElementById('header-streak').textContent = streak;
+  document.getElementById('dicts-title').textContent = `Диктовки за ${profile.grade} клас 📚`;
+  if (streak > 0) {
+    document.getElementById('streak-banner').style.display = 'flex';
+    document.getElementById('streak-text').textContent = `${streak} поредни диктовки!`;
+  }
+  document.getElementById('profile-avatar').textContent = profile.name[0];
+  document.getElementById('profile-name').textContent = profile.name;
+  document.getElementById('profile-email').textContent = profile.email;
+  const g = profile.grade;
+  document.getElementById('settings-grade-3').classList.toggle('active', g === '3');
+  document.getElementById('settings-grade-4').classList.toggle('active', g === '4');
+  renderDicts();
+}
+
+function renderDicts() {
+  const grade = parseInt(profile.grade);
+  const list = document.getElementById('dicts-list');
+  list.innerHTML = '';
+  DICTATIONS.filter(d => d.grade === grade).forEach((d, i) => {
+    const dots = Array.from({length:5}).map((_,j) => `<div class="diff-dot ${j < d.difficulty ? 'active' : ''}"></div>`).join('');
+    list.innerHTML += `
+      <div class="dict-card" onclick="startDictation('${d.id}')">
+        <div class="dict-icon" style="background:${d.color}22">${d.icon}</div>
+        <div class="dict-info">
+          <div class="dict-title">${d.theme}</div>
+          <div class="dict-meta">${d.sentences.length} изречения · трудност ${d.difficulty}/5</div>
+          <div class="difficulty">${dots}</div>
+        </div>
+        <div style="font-size:22px;color:#FED7AA">→</div>
+      </div>`;
+  });
+}
+
+async function loadHistory() {
+  if (!session) return;
+  try {
+    const rows = await sb(`dictation_sessions?child_id=eq.${profile.id}&select=*&order=completed_at.desc&limit=10`, { method:'GET' }, session.access_token);
+    if (rows) history = rows;
+  } catch(_) {}
+}
+
+function renderProgress() {
+  const avg = history.length > 0 ? Math.round(history.reduce((a,h) => a + (h.score||0), 0) / history.length) : 0;
+  document.getElementById('stat-total').textContent = history.length;
+  document.getElementById('stat-avg').textContent = avg + '%';
+  document.getElementById('stat-streak').textContent = streak + ' 🔥';
+  document.getElementById('stat-grade').textContent = profile.grade + ' клас';
+  const list = document.getElementById('history-list');
+  if (history.length === 0) {
+    list.innerHTML = `<div style="background:#fff;border-radius:20px;padding:32px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.05)"><img src="foxy.png" style="width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 12px"><div style="font-family:'Fredoka',sans-serif;font-size:18px;color:#78716C">Все още няма диктовки!</div></div>`;
+    return;
+  }
+  list.innerHTML = history.map(h => {
+    const dict = DICTATIONS.find(d => d.id === h.dictation_id);
+    const color = h.score >= 80 ? '#DCFCE7' : h.score >= 50 ? '#FFF7ED' : '#FFF1F2';
+    const textColor = h.score >= 80 ? '#16A34A' : h.score >= 50 ? '#F97316' : '#EF4444';
+    const emoji = h.score >= 80 ? '🌟' : h.score >= 60 ? '👍' : '💪';
+    const date = new Date(h.completed_at).toLocaleDateString('bg-BG');
+    return `<div class="history-item">
+      <div class="history-score" style="background:${color};color:${textColor}">${h.score}%</div>
+      <div style="flex:1"><div style="font-weight:800;font-size:14px;color:#292524">${dict?.theme||'Диктовка'}</div><div style="font-size:12px;color:#A8A29E">${date}</div></div>
+      <div style="font-size:20px">${emoji}</div>
+    </div>`;
+  }).join('');
+}
+
+async function changeGrade(g) {
+  if (!session || !profile) return;
+  await sb(`profiles?id=eq.${profile.id}`, { method:'PATCH', prefer:'return=minimal', body: JSON.stringify({ grade: g }) }, session.access_token);
+  profile.grade = g;
+  document.getElementById('settings-grade-3').classList.toggle('active', g === '3');
+  document.getElementById('settings-grade-4').classList.toggle('active', g === '4');
+  document.getElementById('header-greeting').textContent = `Здравей, ${profile.name.split(' ')[0]}! · ${g} клас`;
+  document.getElementById('dicts-title').textContent = `Диктовки за ${g} клас 📚`;
+  renderDicts();
+}
+
+// ── Dictation ──
+function startDictation(id) {
+  activeDictation = DICTATIONS.find(d => d.id === id);
+  sentenceIdx = 0; sessionResults = []; isPlaying = false;
+  document.getElementById('dict-theme').textContent = activeDictation.theme;
+  updateDictProgress();
+  showListenPanel();
+  showScreen('dictation');
+  setTimeout(() => speakCurrent(), 500);
+}
+
+function updateDictProgress() {
+  const total = activeDictation.sentences.length;
+  document.getElementById('dict-progress').textContent = `Изречение ${sentenceIdx + 1} от ${total}`;
+  document.getElementById('progress-fill').style.width = ((sentenceIdx / total) * 100) + '%';
+}
+
+function showListenPanel() {
+  document.getElementById('listen-panel').style.display = 'block';
+  document.getElementById('write-panel').style.display = 'none';
+  document.getElementById('result-panel').style.display = 'none';
+  document.getElementById('user-input').value = '';
+  document.getElementById('check-btn').disabled = true;
+  setFoksyMood('listen-foksy', 'thinking');
+  setFoksyMood('dict-foksy', 'happy');
+}
+
+function setSpeed(s) {
+  currentSpeed = s;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function speakCurrent() {
+  if (!activeDictation) return;
+  const text = activeDictation.sentences[sentenceIdx];
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  isPlaying = true;
+  const btn = document.getElementById('speak-btn');
+  btn.textContent = '🔊 Слушам...';
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'bg-BG';
+  utter.rate = currentSpeed;
+  utter.onend = () => {
+    isPlaying = false;
+    btn.textContent = '🔊 Прочети ми!';
+    // Показваме поле за писане след слушане
+    document.getElementById('listen-panel').style.display = 'none';
+    document.getElementById('write-panel').style.display = 'block';
+    document.getElementById('user-input').focus();
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('user-input');
+  if (input) {
+    input.addEventListener('input', () => {
+      document.getElementById('check-btn').disabled = !input.value.trim();
+    });
+  }
+});
+
+function submitSentence() {
+  const userText = document.getElementById('user-input').value.trim();
+  if (!userText) return;
+  const expected = activeDictation.sentences[sentenceIdx];
+  const { errors, score } = analyzeDiff(expected, userText);
+  currentResult = { expected, got: userText, errors, score };
+  sessionResults.push(currentResult);
+  showResultPanel(currentResult);
+}
+
+function analyzeDiff(expected, actual) {
+  const expWords = expected.replace(/[.,!?]/g, '').toLowerCase().split(' ');
+  const actWords = actual.replace(/[.,!?]/g, '').toLowerCase().split(' ');
+  const errors = [];
+  const maxLen = Math.max(expWords.length, actWords.length);
+  for (let i = 0; i < maxLen; i++) {
+    const e = expWords[i] || '';
+    const a = actWords[i] || '';
+    if (e !== a) errors.push({ expected: e, got: a });
+  }
+  const score = Math.max(0, Math.round(((expWords.length - errors.length) / expWords.length) * 100));
+  return { errors, score };
+}
+
+function showResultPanel(result) {
+  document.getElementById('listen-panel').style.display = 'none';
+  document.getElementById('write-panel').style.display = 'none';
+  document.getElementById('result-panel').style.display = 'block';
+  document.getElementById('result-score').textContent = result.score + '%';
+  document.getElementById('result-score').style.color = result.score >= 80 ? '#16A34A' : result.score >= 50 ? '#F97316' : '#EF4444';
+  document.getElementById('correct-text').textContent = result.expected;
+  document.getElementById('correct-text').style.color = '#16A34A';
+  document.getElementById('user-text').textContent = result.got;
+  document.getElementById('user-text').style.color = result.score >= 80 ? '#16A34A' : '#EF4444';
+  const mood = result.score >= 80 ? 'celebrate' : result.score >= 50 ? 'thinking' : 'sad';
+  setFoksyMood('result-foksy', mood);
+  setFoksyMood('dict-foksy', mood);
+  const msgs = { celebrate: 'Браво! Фокси е горд! 🎉', thinking: 'Почти! Продължавай! 💪', sad: 'Не се отказвай! Аз вярвам в теб! 🦊' };
+  document.getElementById('result-msg').textContent = msgs[mood];
+  explainVisible = false;
+  document.getElementById('explain-box').style.display = 'none';
+  const explainBtn = document.getElementById('explain-btn');
+  if (result.errors.length > 0) {
+    explainBtn.style.display = 'inline-block';
+    explainBtn.textContent = '🦊 Фокси обяснява защо';
+  } else {
+    explainBtn.style.display = 'none';
+  }
+  const isLast = sentenceIdx >= activeDictation.sentences.length - 1;
+  document.getElementById('next-btn').textContent = isLast ? 'Виж резултата! 🏆' : 'Следващо изречение →';
+  if (isLast) saveFinalResult();
+}
+
+async function saveFinalResult() {
+  const avg = Math.round(sessionResults.reduce((a, r) => a + r.score, 0) / sessionResults.length);
+  finalScore = avg;
+  const newStreak = avg >= 60 ? streak + 1 : 0;
+  streak = newStreak;
+  document.getElementById('header-streak').textContent = streak;
+  if (session && profile) {
+    await sb(`profiles?id=eq.${profile.id}`, { method:'PATCH', prefer:'return=minimal', body: JSON.stringify({ streak_count: newStreak }) }, session.access_token);
+    await sb('dictation_sessions', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ child_id: profile.id, dictation_id: activeDictation.id, score: avg, input_text: sessionResults[sessionResults.length-1].got, expected_text: sessionResults[sessionResults.length-1].expected, errors: JSON.stringify(sessionResults) }) }, session.access_token);
+    loadHistory();
+  }
+}
+
+function toggleExplain() {
+  explainVisible = !explainVisible;
+  document.getElementById('explain-box').style.display = explainVisible ? 'block' : 'none';
+  document.getElementById('explain-btn').textContent = explainVisible ? 'Скрий обяснението' : '🦊 Фокси обяснява защо';
+  if (explainVisible && currentResult) {
+    document.getElementById('explain-content').innerHTML = currentResult.errors.map(err => `
+      <div class="explain-item">
+        <span style="color:#EF4444;font-weight:800">"${err.got || 'пропуснато'}"</span> → 
+        <span style="color:#16A34A;font-weight:800">"${err.expected}"</span>
+        <div style="color:#78716C;margin-top:2px">${
+          err.expected === '' ? 'Тази дума е излишна.' :
+          err.got === '' ? `Пропусна думата "${err.expected}".` :
+          `Правилното изписване е "${err.expected}".`
+        }</div>
+      </div>`).join('');
+  }
+}
+
+function nextSentence() {
+  const isLast = sentenceIdx >= activeDictation.sentences.length - 1;
+  if (isLast) { showFinalResult(); return; }
+  sentenceIdx++;
+  updateDictProgress();
+  showListenPanel();
+  setTimeout(() => speakCurrent(), 300);
+}
+
+function showFinalResult() {
+  const stars = finalScore >= 90 ? '⭐⭐⭐' : finalScore >= 70 ? '⭐⭐' : finalScore >= 50 ? '⭐' : '';
+  document.getElementById('final-score').textContent = finalScore + '%';
+  document.getElementById('final-score').style.color = finalScore >= 70 ? '#16A34A' : '#F97316';
+  document.getElementById('final-stars').textContent = stars;
+  const titles = ['Не се отказвай! 🦊', 'Добра работа! 💪', 'Отлично! 👏', 'Невероятно! 🎉'];
+  document.getElementById('final-title').textContent = finalScore >= 90 ? titles[3] : finalScore >= 70 ? titles[2] : finalScore >= 50 ? titles[1] : titles[0];
+  const streakEl = document.getElementById('final-streak');
+  if (streak > 0) { streakEl.textContent = `🔥 ${streak} поредни диктовки!`; streakEl.style.display = 'block'; }
+  const mood = finalScore >= 70 ? 'celebrate' : 'thinking';
+  setFoksyMood('final-foksy', mood);
+  showScreen('result');
+}
+
+function retryDictation() {
+  startDictation(activeDictation.id);
+  showScreen('dictation');
+}
+
+function exitDictation() {
+  window.speechSynthesis?.cancel();
+  showScreen('app');
+}
+
+// ── Init ──
+window.addEventListener('load', () => {
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const tok = params.get('access_token');
+    if (tok) {
+      const fakeSession = { access_token: tok, user: { id: '' } };
+      localStorage.setItem('dikta_session', JSON.stringify(fakeSession));
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }
+  const saved = localStorage.getItem('dikta_session');
+  if (saved) {
+    try {
+      session = JSON.parse(saved);
+      loadProfile(session.user.id, session.access_token);
+    } catch(_) {}
+  }
+});
+</script>
+</body>
+</html>
